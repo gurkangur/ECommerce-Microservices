@@ -3,11 +3,11 @@ using Catalog.Api.Data.Context;
 
 namespace Catalog.UnitTests.Common
 {
-    public class CommandTestBase : IDisposable
+    public class TestBase : IDisposable
     {
         protected readonly CatalogDbContext _context;
 
-        public CommandTestBase()
+        public TestBase()
         {
             _context = CatalogDbContextFactory.Create();
         }
