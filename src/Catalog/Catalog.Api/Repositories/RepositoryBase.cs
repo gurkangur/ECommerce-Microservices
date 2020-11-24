@@ -50,9 +50,9 @@ namespace Catalog.Api.Repositories
             return await _context.Set<T>().Where(predicate).ToListAsync();
         }
 
-        public async Task<T> GetAsync(Guid id)
+        public async Task<T> GetAsync(Expression<Func<T, bool>> predicate)
         {
-            var entity = await _context.Set<T>().FindAsync(id);
+            var entity = await _context.Set<T>().FirstOrDefaultAsync(predicate);
 
             return entity;
         }

@@ -12,6 +12,6 @@ namespace Catalog.Api.Repositories.Interfaces
         Task UpdateAsync(T entity);
         Task<IEnumerable<T>> GetAllAsync();
         Task<IEnumerable<T>> GetWhereAsync(Expression<Func<T, bool>> predicate);
-        Task<T> GetAsync(Guid id);
+        Task<T> GetAsync(Expression<Func<T, bool>> predicate);
     }
 }
