@@ -14,6 +14,17 @@ namespace Catalog.UnitTests.Common
 
             var context = new CatalogDbContext(options);
 
+            context.Categories.Add(new Api.Entities.Category()
+            {
+                Id = 1,
+                Code = "001",
+                Name = "Lenovo Thinkpad"
+            });
+            context.SaveChanges();
+
+
+
+
             context.Database.EnsureCreated();
 
             return context;
