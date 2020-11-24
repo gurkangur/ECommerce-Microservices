@@ -1,17 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Catalog.Api.Data.Context;
+using Catalog.Api.Repositories;
+using Catalog.Api.Repositories.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.EntityFrameworkCore;
 
 namespace Catalog.Api
 {
@@ -31,8 +26,10 @@ namespace Catalog.Api
             var connectionString = Configuration.GetConnectionString("CatalogDatabaseConnectionString");
             services.AddDbContext<CatalogDbContext>(options =>
             {
-                options.UseNpgsql(connectionString);
+                //options.UseNpgsql(connectionString);
+                options.UseInMemoryDatabase("CatalogDb");
             });
+              services.AddScoped(typeof(ICategoryRepository), typeof(CategoryRepository));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
