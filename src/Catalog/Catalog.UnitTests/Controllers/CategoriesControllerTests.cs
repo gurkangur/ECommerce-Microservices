@@ -43,13 +43,38 @@ namespace Catalog.UnitTests.Controllers
             A.CallTo(() => _categoryRepository.GetAllAsync()).Returns(mockCategories);
 
             //Act
-            var getCategoriesResult  = await _sut.GetCategories();
+            var getCategoriesResult = await _sut.GetCategories();
 
             //Assert
             A.CallTo(() => _categoryRepository.GetAllAsync()).MustHaveHappenedOnceExactly();
             var okObjectResult = getCategoriesResult.Result.Should().BeOfType<OkObjectResult>().Subject;
             var result = okObjectResult.Value.Should().BeAssignableTo<IEnumerable<Category>>().Subject;
             result.Should().HaveCount(mockCategories.Count());
+        }
+        
+        [Fact]
+        public async Task GetCategory_WhenValidId_ShouldReturnActionResultOfCategoryWith200StatusCode()
+        {
+            //Arrange
+            var category = _fixture.Create<Category>();
+            A.CallTo(() => _categoryRepository.GetAsync(x => x.Id == category.Id)).Returns(category);
+
+            //Act
+            var getCategoryResult = await _sut.GetCategory(category.Id);
+
+            //Assert
+            var okObjectResult = getCategoryResult.Result.Should().BeOfType<OkObjectResult>().Subject;
+            var result = okObjectResult.Value.Should().BeAssignableTo<Category>().Subject;
+        }
+
+        [Fact]
+        public async Task GetCategory_WhenIdIsNegativeInValid_ShouldReturnActionResultOfCategoryWith200StatusCode()
+        {
+            //Act
+            var getCategoryResult = await _sut.GetCategory(-1);
+
+            //Assert
+            getCategoryResult.Result.Should().BeOfType<BadRequestResult>();
         }
     }
 }

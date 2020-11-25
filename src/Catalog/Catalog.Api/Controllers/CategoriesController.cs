@@ -24,5 +24,28 @@ namespace Catalog.Api.Controllers
         {
             return Ok(await _categoryRepository.GetAllAsync());
         }
+
+        [HttpGet("{id:int}")]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(Category), (int)HttpStatusCode.OK)]
+        public async Task<ActionResult<Category>> GetCategory(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest();
+            }
+
+            var category = await _categoryRepository.GetAsync(x => x.Id == id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(category);
+        }
+
+
     }
 }
