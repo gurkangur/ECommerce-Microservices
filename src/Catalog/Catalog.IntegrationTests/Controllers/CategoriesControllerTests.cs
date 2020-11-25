@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -92,6 +93,30 @@ namespace Catalog.IntegrationTests.Controllers
             var responseString = await response.Content.ReadAsStringAsync();
             var category = JsonConvert.DeserializeObject<Category>(responseString);
             category.Id.Should().Be(99);
+        }
+
+        [Fact]
+        public async Task DeleteCategory()
+        {
+            // Act
+            var client = _factory.GetAnonymousClient();
+            var response = await client.DeleteAsync("/api/v1/categories/1");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            responseString.Should().Be(String.Empty);
+        }
+
+        [Fact]
+        public async Task DeleteCategory_WhenInValidId_ShoulReturnsNotFound()
+        {
+            // Act
+            var client = _factory.GetAnonymousClient();
+            var response = await client.DeleteAsync("/api/v1/categories/-1"); ;
+
+            // Assert
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
     }
 }

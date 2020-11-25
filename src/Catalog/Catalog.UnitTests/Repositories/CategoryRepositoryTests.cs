@@ -50,7 +50,7 @@ namespace Catalog.UnitTests.Repositories
         public async Task CreateCategory()
         {
             //Arrange
-            var newCategory= new Category()
+            var newCategory = new Category()
             {
                 Id = 99,
                 Code = "099",
@@ -65,6 +65,20 @@ namespace Catalog.UnitTests.Repositories
             category.Should().BeAssignableTo<Category>();
             category.Should().NotBeNull();
             category.Id.Should().Be(newCategory.Id);
+        }
+
+        [Fact]
+        public async Task DeleteCategory()
+        {
+            //Arrange
+            var deleteCategory = await _context.Categories.FirstOrDefaultAsync(x => x.Id == 1);
+
+            //Act
+            await _sut.DeleteAsync(deleteCategory);
+
+            //Assert
+            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == 1);
+            category.Should().BeNull();
         }
     }
 }

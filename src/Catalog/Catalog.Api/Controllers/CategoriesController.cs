@@ -54,5 +54,22 @@ namespace Catalog.Api.Controllers
             return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
         }
 
+        [HttpDelete("{id:int}")]
+        [ProducesResponseType((int)HttpStatusCode.NoContent)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        public async Task<IActionResult> DeleteCategory(int id)
+        {
+            var category = await _categoryRepository.GetAsync(x => x.Id == id);
+
+            if (category == null)
+            {
+                return NotFound(new { Message = $"Category with id {id} not found." });
+            }
+
+            await _categoryRepository.DeleteAsync(category);
+
+            return NoContent();
+        }
+
     }
 }

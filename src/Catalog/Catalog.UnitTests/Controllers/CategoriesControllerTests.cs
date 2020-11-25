@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoFixture;
 using Catalog.Api.Controllers;
@@ -78,17 +80,34 @@ namespace Catalog.UnitTests.Controllers
         }
 
         [Fact]
-        public async Task CreateCategory_WhenIdValid_ShouldReturnActionResultOfCategoryWith201StatusCode()
+        public async Task DeleteCategory_WhenValidId_ShouldReturnNoContent()
         {
-            var newCategory = _fixture.Create<Category>();
+            //Arrange
+            A.CallTo(() => _categoryRepository.GetAsync(A<Expression<Func<Category, bool>>>.That
+                .Matches(exp => Expression.Lambda<Func<int>>(((BinaryExpression)exp.Body).Right).Compile().Invoke() == 1)))
+                .Returns(Task.FromResult<Category>(new Category()));
+
             //Act
-            var result = await _sut.CreateCategory(newCategory);
+            var result = await _sut.DeleteCategory(1);
 
             //Assert
-  
-            var okResult = result.Should().BeOfType<ActionResult<Category>>().Subject.Result.Should().BeAssignableTo<CreatedAtActionResult>().Subject;
-            var category = okResult.Value.Should().BeAssignableTo<Category>().Subject;
-            category.Id.Should().Be(newCategory.Id);
+            var okObjectResult = result.Should().BeOfType<NoContentResult>();
+        }
+
+        [Fact]
+        public async Task DeleteCategory_WhenInValidId_ShouldReturnNotFound()
+        {
+            //Arrange
+            var invalidId = 99;
+            A.CallTo(() => _categoryRepository.GetAsync(A<Expression<Func<Category, bool>>>.That
+                .Matches(exp => Expression.Lambda<Func<int>>(((BinaryExpression)exp.Body).Right).Compile().Invoke() == invalidId)))
+                .Returns(Task.FromResult<Category>(null));
+
+            //Act
+            var result = await _sut.DeleteCategory(invalidId);
+
+            //Assert
+            result.Should().BeOfType<NotFoundObjectResult>();
         }
 
     }
