@@ -31,7 +31,7 @@ namespace Catalog.UnitTests.Repositories
             result.Should().NotBeNull();
             result.Count().Should().Be(categories.Count());
         }
-        
+
         [Fact]
         public async Task GetCategory_WhenIdIsValid_ShouldReturnCategory()
         {
@@ -45,6 +45,26 @@ namespace Catalog.UnitTests.Repositories
             result.Should().BeAssignableTo<Category>();
             result.Should().NotBeNull();
             result.Name.Should().Be(category.Name);
+        }
+        [Fact]
+        public async Task CreateCategory()
+        {
+            //Arrange
+            var newCategory= new Category()
+            {
+                Id = 99,
+                Code = "099",
+                Name = "Lenovo Thinkpad"
+            };
+
+            //Act
+            await _sut.CreateAsync(newCategory);
+
+            //Assert
+            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == newCategory.Id);
+            category.Should().BeAssignableTo<Category>();
+            category.Should().NotBeNull();
+            category.Id.Should().Be(newCategory.Id);
         }
     }
 }

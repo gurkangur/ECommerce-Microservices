@@ -46,6 +46,13 @@ namespace Catalog.Api.Controllers
             return Ok(category);
         }
 
+        [HttpPost]
+        [ProducesResponseType(typeof(Category), (int)HttpStatusCode.Created)]
+        public async Task<ActionResult<Category>> CreateCategory([FromBody] Category category)
+        {
+            await _categoryRepository.CreateAsync(category);
+            return CreatedAtAction(nameof(GetCategory), new { id = category.Id }, category);
+        }
 
     }
 }

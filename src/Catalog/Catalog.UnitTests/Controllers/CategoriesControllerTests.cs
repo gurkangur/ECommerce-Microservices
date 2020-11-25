@@ -51,7 +51,7 @@ namespace Catalog.UnitTests.Controllers
             var result = okObjectResult.Value.Should().BeAssignableTo<IEnumerable<Category>>().Subject;
             result.Should().HaveCount(mockCategories.Count());
         }
-        
+
         [Fact]
         public async Task GetCategory_WhenValidId_ShouldReturnActionResultOfCategoryWith200StatusCode()
         {
@@ -76,5 +76,20 @@ namespace Catalog.UnitTests.Controllers
             //Assert
             getCategoryResult.Result.Should().BeOfType<BadRequestResult>();
         }
+
+        [Fact]
+        public async Task CreateCategory_WhenIdValid_ShouldReturnActionResultOfCategoryWith201StatusCode()
+        {
+            var newCategory = _fixture.Create<Category>();
+            //Act
+            var result = await _sut.CreateCategory(newCategory);
+
+            //Assert
+  
+            var okResult = result.Should().BeOfType<ActionResult<Category>>().Subject.Result.Should().BeAssignableTo<CreatedAtActionResult>().Subject;
+            var category = okResult.Value.Should().BeAssignableTo<Category>().Subject;
+            category.Id.Should().Be(newCategory.Id);
+        }
+
     }
 }

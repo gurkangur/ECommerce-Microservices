@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Catalog.Api;
 using Catalog.Api.Entities;
@@ -56,7 +58,7 @@ namespace Catalog.IntegrationTests.Controllers
             // Assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
-        
+
         [Fact]
         public async Task GetCategory_WhenIdNotFound()
         {
@@ -66,6 +68,30 @@ namespace Catalog.IntegrationTests.Controllers
 
             // Assert
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task CreateCategory()
+        {
+            // Arrange
+            var categoryAdd = new Category()
+            {
+                Id = 99,
+                Code = "099",
+                Name = "Lenovo Thinkpad"
+            };
+            var content = JsonConvert.SerializeObject(categoryAdd);
+            var stringContent = new StringContent(content, Encoding.UTF8, "application/json");
+
+            // Act
+            var client = _factory.GetAnonymousClient();
+            var response = await client.PostAsync("/api/v1/categories", stringContent);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseString = await response.Content.ReadAsStringAsync();
+            var category = JsonConvert.DeserializeObject<Category>(responseString);
+            category.Id.Should().Be(99);
         }
     }
 }
