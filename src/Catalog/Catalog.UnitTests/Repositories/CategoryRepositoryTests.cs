@@ -31,5 +31,20 @@ namespace Catalog.UnitTests.Repositories
             result.Should().NotBeNull();
             result.Count().Should().Be(categories.Count());
         }
+        
+        [Fact]
+        public async Task GetCategory_WhenIdIsValid_ShouldReturnCategory()
+        {
+            //Arrange
+            var category = await _context.Categories.FirstOrDefaultAsync(x => x.Id == 1);
+
+            //Act
+            var result = await _sut.GetAsync(x => x.Id == 1);
+
+            //Assert
+            result.Should().BeAssignableTo<Category>();
+            result.Should().NotBeNull();
+            result.Name.Should().Be(category.Name);
+        }
     }
 }
